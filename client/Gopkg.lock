@@ -2,6 +2,14 @@
 
 
 [[projects]]
+  branch = "master"
+  digest = "1:174cfc45f3f3e0f24f4bc3d2c80d8bcd4c02e274f9a0c4e7fcb6ff3273c0eeee"
+  name = "github.com/Pallinder/sillyname-go"
+  packages = ["."]
+  pruneopts = ""
+  revision = "97aeae9e6ba11ec62a40cf8b6b4bc42116c0a303"
+
+[[projects]]
   digest = "1:65c9e58c85d0791b146dc7f4387330329204a70fb34532e7ffce71a2f04f59a2"
   name = "github.com/gdamore/encoding"
   packages = ["."]
@@ -21,15 +29,15 @@
   version = "v1.1.1"
 
 [[projects]]
-  digest = "1:3dd078fda7500c341bc26cfbc6c6a34614f295a2457149fc1045cab767cbcf18"
+  branch = "master"
+  digest = "1:d3d38150b6d77b2aad42a9e105170538b6563518993d43df78a1add6e31cce62"
   name = "github.com/golang/protobuf"
   packages = [
     "proto",
     "ptypes/timestamp",
   ]
   pruneopts = ""
-  revision = "aa810b61a9c79d51363740d207bb46cf8e620ed5"
-  version = "v1.2.0"
+  revision = "c823c79ea1570fb5ff454033735a8e68575d1d0f"
 
 [[projects]]
   branch = "master"
@@ -48,6 +56,7 @@
   version = "v1.0"
 
 [[projects]]
+  branch = "master"
   digest = "1:2fc695335969cd38266bd29c0d718f06edf9328b305e0cce0e117b673695c73c"
   name = "github.com/marcusolsson/tui-go"
   packages = [
@@ -56,7 +65,6 @@
   ]
   pruneopts = ""
   revision = "4bb09120fbbb8b6e7d44d802f1e66f78bb4650a0"
-  version = "v0.4.0"
 
 [[projects]]
   digest = "1:84c28d9899cc4e00c38042d345cea8819275a5a62403a58530cac67022894776"
@@ -75,12 +83,12 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:d2df7451f4829b4dd6422e1ebf336fe9400220efe735f80f27d84a07e3180a1f"
+  branch = "master"
+  digest = "1:9d78da88d0041a08dc40d2ce157f710bc0d4f8dd85633bce71f7da142dc38961"
   name = "github.com/pebbe/zmq4"
   packages = ["."]
   pruneopts = ""
-  revision = "5b443b6471cea4b4f9f85025530c04c93233f76a"
-  version = "v1.0.0"
+  revision = "7a493a642e7acbd03045d4f5fe9516908a62f86f"
 
 [[projects]]
   branch = "master"
@@ -112,6 +120,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/Pallinder/sillyname-go",
     "github.com/golang/protobuf/proto",
     "github.com/golang/protobuf/ptypes/timestamp",
     "github.com/google/logger",

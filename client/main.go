@@ -7,12 +7,18 @@ import (
 	"sync"
 
 	"github.com/AkihikoITOH/protobuf-over-zeromq-concept/client/pb"
+	"github.com/Pallinder/sillyname-go"
 	"github.com/google/logger"
+	uuid "github.com/satori/go.uuid"
 )
 
 var (
 	lgr = logger.Init("Server", false, false, ioutil.Discard)
 )
+
+func newUser() *pb.User {
+	return &pb.User{Uuid: uuid.Must(uuid.NewV4()).String(), Name: sillyname.GenerateStupidName()}
+}
 
 func main() {
 	listener, err := NewListener(lgr)
@@ -52,9 +58,10 @@ func main() {
 		}
 	}()
 
-	view, err := NewView(listener.Messages(), outgoingMessages)
+	view := NewView(newUser(), listener.Messages(), outgoingMessages)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+	view.BuildUI()
 	view.Start()
 }

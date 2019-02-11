@@ -15,8 +15,8 @@ func newHistory() *tui.Box {
 	return tui.NewVBox()
 }
 
-func newHistoryBox(history *tui.Box) *tui.Box {
-	historyScroll := tui.NewScrollArea(history)
+func (v *View) newHistoryBox() *tui.Box {
+	historyScroll := tui.NewScrollArea(v.history)
 	historyScroll.SetAutoscrollToBottom(true)
 
 	historyBox := tui.NewVBox(historyScroll)
@@ -33,20 +33,18 @@ func newInput() *tui.Entry {
 	return input
 }
 
-func newInputBox(input *tui.Entry) *tui.Box {
-	inputBox := tui.NewHBox(input)
+func (v *View) newInputBox() *tui.Box {
+	inputBox := tui.NewHBox(v.input)
 	inputBox.SetBorder(true)
 	inputBox.SetSizePolicy(tui.Expanding, tui.Maximum)
 
 	return inputBox
 }
 
-func newChatView() *tui.Box {
-	history := newHistory()
-	input := newInput()
+func (v *View) newChatView() *tui.Box {
 	chat := tui.NewVBox(
-		newHistoryBox(history),
-		newInputBox(input),
+		v.newHistoryBox(),
+		v.newInputBox(),
 	)
 	chat.SetSizePolicy(tui.Expanding, tui.Expanding)
 
@@ -56,54 +54,67 @@ func newChatView() *tui.Box {
 func format(message *pb.Message) *tui.Box {
 	return tui.NewHBox(
 		tui.NewLabel(time.Unix(message.GetTime().GetSeconds(), 0).Format(time.RFC3339)),
-		tui.NewPadder(1, 0, tui.NewLabel(fmt.Sprintf("<%s>", message.GetSender()))),
+		tui.NewPadder(1, 0, tui.NewLabel(fmt.Sprintf("<%s (%s)>", message.GetSender().GetName(), message.GetSender().GetUuid()))),
 		tui.NewLabel(message.GetContent()),
 		tui.NewSpacer(),
 	)
 }
 
-func defaultOnInput(history *tui.Box, input *tui.Entry, msgCh chan<- *pb.Message) func(e *tui.Entry) {
+func (v *View) defaultOnInput() func(e *tui.Entry) {
 	return func(e *tui.Entry) {
 		ts := &timestamp.Timestamp{Seconds: time.Now().UTC().Unix()}
-		message := &pb.Message{Time: ts, Sender: "John", Content: e.Text()}
-		input.SetText("")
-		msgCh <- message
+		message := &pb.Message{Time: ts, Sender: v.user, Content: e.Text()}
+		v.input.SetText("")
+		v.outgoingMessages <- message
 	}
 }
 
-func defaultOnNewMessage(history *tui.Box) func(message *pb.Message) {
+func (v *View) defaultOnNewMessage() func(message *pb.Message) {
 	return func(message *pb.Message) {
-		history.Append(format(message))
+		v.history.Append(format(message))
+		v.Repaint()
 	}
 }
 
 type View struct {
 	tui.UI
+	user             *pb.User
+	input            *tui.Entry
+	history          *tui.Box
 	onNewMessage     func(msg *pb.Message)
+	outgoingMessages chan<- *pb.Message
 	incomingMessages <-chan *pb.Message
 }
 
-func NewView(incomingMessages <-chan *pb.Message, outgoingMessages chan<- *pb.Message) (*View, error) {
+func NewView(user *pb.User, incomingMessages <-chan *pb.Message, outgoingMessages chan<- *pb.Message) *View {
 	input := newInput()
 	history := newHistory()
-	input.OnSubmit(defaultOnInput(history, input, outgoingMessages))
-	chat := tui.NewVBox(
-		newHistoryBox(history),
-		newInputBox(input),
-	)
-	chat.SetSizePolicy(tui.Expanding, tui.Expanding)
+	view := &View{UI: nil, input: input, history: history, user: user, incomingMessages: incomingMessages, outgoingMessages: outgoingMessages}
+
+	return view
+}
+
+func (v *View) BuildUI() error {
+	v.input.OnSubmit(v.defaultOnInput())
+	v.onNewMessage = v.defaultOnNewMessage()
+	chat := v.newChatView()
 	view, err := tui.New(chat)
 	if err != nil {
 		log.Fatal(err)
+		return err
 	}
+	v.UI = view
 
-	view.SetKeybinding("Esc", func() { view.Quit() })
-	view.SetKeybinding("Ctrl-C", func() { view.Quit() })
+	v.SetKeybinding("Esc", func() { v.Quit() })
+	v.SetKeybinding("Ctrl-C", func() { v.Quit() })
 
-	return &View{UI: view, onNewMessage: defaultOnNewMessage(history), incomingMessages: incomingMessages}, err
+	return nil
 }
 
 func (v *View) Start() {
+	if v.UI == nil {
+		return
+	}
 	go func() {
 		for {
 			msg, ok := <-v.incomingMessages

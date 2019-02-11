@@ -1,11 +1,12 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
+import "user.proto";
 
 package pb;
 
 message Message {
-  string sender = 1;
+  User sender = 1;
   string content = 2;
   google.protobuf.Timestamp time = 3;
 }
