@@ -1,0 +1,21 @@
+required = ["github.com/pebbe/zmq4", "github.com/google/logger", "github.com/marcusolsson/tui-go", "github.com/golang/protobuf/ptypes/timestamp"]
+
+[[constraint]]
+  name = "github.com/pebbe/zmq4"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/google/logger"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/marcusolsson/tui-go"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/golang/protobuf"
+  branch = "master"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/Pallinder/sillyname-go"

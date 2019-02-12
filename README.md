@@ -6,16 +6,17 @@ This project is a proof of concept for an application using [ZeroMQ](http://zero
 
 - `server` - contains files for a server.
 - `client` - contains files for clients which talks to a server.
+  - `tui` - Terminal UI
 - `protos` - contains `.proto` files which defines Protocol Buffer messages.
 
 ## Setup
 
-To generate Go files which contain structs generated from the `.proto` files, run `./build/generate_pb.sh` in `server` or `client` directory.
+To generate Go files which contain structs generated from the `.proto` files, run `./build/generate_pb.sh` in `server` or `client/tui` directory.
 
 - Build server program: `cd server; go build`
-- Build client program: `cd client; go build`
+- Build tui client program: `cd client/tui; go build`
 
 ## Run
 
 - Start server: `cd server; ./server`
-- Start client: `cd client; ./client`
+- Start tui client: `cd client/tui; ./tui`
